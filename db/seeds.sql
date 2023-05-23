@@ -24,8 +24,8 @@ INSERT INTO department (id, name)
 VALUES  (1, "Clerical"),
         (2, "Sales Floor"),
         (3, "Backroom"),
-        (4, "Overnight");
-        (5, "Executive")
+        (4, "Overnight"),
+        (5, "Executive");
 
 INSERT INTO role (id, title, salary, department_id)
 VALUES  (1, "Receptionist", 50000, 1),

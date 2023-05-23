@@ -21,6 +21,30 @@ function viewDepts() {
   }
 )}
 
+function viewRoles() {
+  connection.query('SELECT * FROM `role`', function (err, results, fields) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.table(results)
+      backOrQuit();
+    }
+  }
+  )
+}
+
+function viewEmployees() {
+  connection.query('SELECT * FROM `employee`', function (err, results, fields) {
+    if (err) {
+      console.error(err);
+    } else {
+      console.table(results)
+      backOrQuit();
+    }
+  }
+  )
+}
+
 function backOrQuit() {
     inquirer
       .prompt([
@@ -43,16 +67,16 @@ function backOrQuit() {
 
 function handleResponse(answers) {
   if (answers.q1 === 'View all departments') {
-    console.log('VIEWING DEPARTMENTS\n')
+    console.log('~~~Viewing Departments~~~\n')
     viewDepts();
   };
   if (answers.q1 === 'View all roles') {
-    console.log('running viewRoles()')  
-    // viewRoles();
+    console.log('~~~Viewing Roles~~~\n')  
+    viewRoles();
   } 
   if (answers.q1 === 'View all employees') {
-    console.log('runing viewEmployees()') 
-    // viewEmployeees();
+    console.log('~~~Viewing Employees~~~') 
+    viewEmployees();
   }
   if (answers.q1 === 'Add a department') {
     console.log('running addDepartment()')
@@ -86,7 +110,6 @@ function runProgram() {
     ]
     )
     .then((answers) => {
-      console.log(answers.q1)
       handleResponse(answers);
     })
   .catch((error) => {
