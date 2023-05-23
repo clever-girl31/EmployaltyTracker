@@ -25,6 +25,7 @@ VALUES  (1, "Clerical"),
         (2, "Sales Floor"),
         (3, "Backroom"),
         (4, "Overnight");
+        (5, "Executive")
 
 INSERT INTO role (id, title, salary, department_id)
 VALUES  (1, "Receptionist", 50000, 1),
@@ -35,7 +36,7 @@ VALUES  (1, "Receptionist", 50000, 1),
         (6, "Backroom Manager", 40000, 3),
         (7, "Overnight Rep", 50000, 4),
         (8, "Overnght Manager", 40000, 4),
-        (9, "Store Manager", 30000, NULL);
+        (9, "Store Manager", 30000, 5);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES  (1, "Papa", "Johns", 1, 2),
