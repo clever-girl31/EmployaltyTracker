@@ -51,14 +51,10 @@ function addDepartment() {
         type: 'input',
         name: 'newDept',
         message: 'Enter new department name:',
-    }
-    ]
-    )
+    }])
     .then((answers) => {
       console.log(answers.newDept)
-
-      connection.query(
-        'SELECT COUNT(*) AS count FROM department', function(err, results) {
+      connection.query('SELECT COUNT(*) AS count FROM department', function(err, results) {
           console.log(results[0].count)
           var newDeptId = results[0].count + 1
 
@@ -69,20 +65,43 @@ function addDepartment() {
               console.log(`New department "${answers.newDept}" successfully added.`)
             }
           })
-        }
-        )
-        
-        
-
-
-
-
       })
+    })
     .catch((error) => {
       if (error.isTtyError) {
       console.error(err)
     }
-  })};
+  })
+};
+
+// function addRole() {
+//   inquirer
+//     .prompt([{
+//       type: 'input',
+//       name: 'newRole',
+//       message: 'Enter new role name:',
+//     }])
+//     .then((answers) => {
+//       console.log(answers.newRole)
+//       connection.query('SELECT COUNT(*) AS count FROM role', function (err, results) {
+//         console.log(results[0].count)
+//         var newRoleId = results[0].count + 1
+
+//         connection.query(`INSERT INTO role (id, name) VALUES (${newDeptId}, "${answers.newDept}")`, function (err) {
+//           if (err) {
+//             console.error(err)
+//           } else {
+//             console.log(`New department "${answers.newDept}" successfully added.`)
+//           }
+//         })
+//       })
+//     })
+//     .catch((error) => {
+//       if (error.isTtyError) {
+//         console.error(err)
+//       }
+//     })
+// };
 
 function backOrQuit() {
     inquirer
