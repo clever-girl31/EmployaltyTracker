@@ -1,2 +1,8 @@
 # EmployaltyTracker
-a managerial/human resources application
+
+## Description
+
+Employalty Tracker is a CLI based application for managing your business.
+
+## Application
+

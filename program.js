@@ -141,6 +141,7 @@ function getRoles() {
 }
 getRoles()
 
+
 const empList = []
 function getEmps() {
   connection.query('SELECT * FROM `employee`', function (err, results) {
@@ -157,32 +158,32 @@ getEmps()
 
 function addEmployee() {
   inquirer
-    .prompt([{
-      type: 'input',
-      name: 'newFirst',
-      message: 'Enter new employee first name:',
-    }, {
-      type: 'input',
-      name: 'newLast',
-      message: 'Enter new employee last name:'
-    }, {
-      type: 'list',
-      name: 'role',
-      message: 'Choose new employee role:',
-      choices: roleList,
-    }, {
-      type: 'list',
-      name: 'mgr',
-      message: 'Choose new employee manager:',
-      choices: empList
-    }])
-    .then((answers) => {
-      connection.query('SELECT COUNT(*) AS count FROM employee', function (err, results) {
-        var roleId = roleList.indexOf(answers.role) + 1
-        var mgrId = empList.indexOf(answers.mgr) + 1
-        var newEmpId = results[0].count + 1
-
-        connection.query(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (${newEmpId}, "${answers.newFirst}", "${answers.newLast}", ${roleId}, ${mgrId})`, function (err) {
+  .prompt([{
+    type: 'input',
+    name: 'newFirst',
+    message: 'Enter new employee first name:',
+  }, {
+    type: 'input',
+    name: 'newLast',
+    message: 'Enter new employee last name:'
+  }, {
+    type: 'list',
+    name: 'role',
+    message: 'Choose new employee role:',
+    choices: roleList,
+  }, {
+    type: 'list',
+    name: 'mgr',
+    message: 'Choose new employee manager:',
+    choices: empList
+  }])
+  .then((answers) => {
+    connection.query('SELECT COUNT(*) AS count FROM employee', function (err, results) {
+      var roleId = roleList.indexOf(answers.role) + 1
+      var mgrId = empList.indexOf(answers.mgr) + 1
+      var newEmpId = results[0].count + 1
+      
+      connection.query(`INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (${newEmpId}, "${answers.newFirst}", "${answers.newLast}", ${roleId}, ${mgrId})`, function (err) {
           if (err) {
             console.error(err)
           } else {
@@ -198,6 +199,42 @@ function addEmployee() {
       }
     })
 };
+
+function updateEmpRole() {
+  inquirer
+    .prompt ([
+      {
+        type: 'list',
+        name: 'emp',
+        message: 'Choose employee to update:',
+        choices: empList
+      }, {
+        type: 'list',
+        name: 'newRole',
+        message: 'Select new role:',
+        choices: roleList
+      }
+    ])
+    .then((answers) => {
+      
+      var updatedRoleId = roleList.indexOf(answers.newRole) + 1
+      var empId = empList.indexOf(answers.emp) + 1
+      console.log(empId)
+      
+      connection.query(`UPDATE employee SET role_id = ${updatedRoleId} WHERE id = ${empId}`, function (err) {
+        if (err) {
+          console.error(err)
+        } else {
+          console.log(`Updated ${answers.emp}'s role.`)
+          backOrQuit()
+        }
+      })
+
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
 
 function backOrQuit() {
     inquirer
@@ -241,12 +278,12 @@ function handleResponse(answers) {
     addRole();
   }
   if (answers.q1 === 'Add an employee') {
-    console.log('running addEmployee()')
+    console.log('***Add Employee***\n')
      addEmployee();
   }
   if (answers.q1 === 'Update an employee role') {
-    console.log('running updateEmpRole()')
-    // updateEmpRole();
+    console.log('***Update Role***\n')
+    updateEmpRole();
   }
   if (answers.q1 === 'Quit') {
     process.exit();
@@ -267,12 +304,8 @@ function runProgram() {
       handleResponse(answers);
     })
   .catch((error) => {
-    if (error.isTtyError) {
-      console.error('error')
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else went wrong
-    }
-  })};
+    console.error(error)
+})};
 
-  runProgram()
+
+runProgram()
