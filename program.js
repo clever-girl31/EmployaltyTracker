@@ -9,7 +9,6 @@ const connection = mysql.createConnection({
 });
 
 
-
 function viewDepts() {
   connection.query('SELECT * FROM `department`', function (err, results, fields) {
     if (err) {
@@ -19,8 +18,9 @@ function viewDepts() {
       backOrQuit();
     }
   }
-)}
-
+  )
+}
+  
 function viewRoles() {
   connection.query('SELECT * FROM `role`', function (err, results, fields) {
     if (err) {
@@ -32,76 +32,100 @@ function viewRoles() {
   }
   )
 }
-
+  
 function viewEmployees() {
   connection.query('SELECT * FROM `employee`', function (err, results, fields) {
     if (err) {
       console.error(err);
     } else {
-      console.table(results)
-      backOrQuit();
+    console.table(results)
+    backOrQuit();
     }
   }
-  )
+)
 }
-
+  
 function addDepartment() {
   inquirer
     .prompt ([ {
-        type: 'input',
-        name: 'newDept',
-        message: 'Enter new department name:',
+      type: 'input',
+      name: 'newDept',
+      message: 'Enter new department name:',
     }])
     .then((answers) => {
       console.log(answers.newDept)
       connection.query('SELECT COUNT(*) AS count FROM department', function(err, results) {
-          console.log(results[0].count)
-          var newDeptId = results[0].count + 1
-
-          connection.query (`INSERT INTO department (id, name) VALUES (${newDeptId}, "${answers.newDept}")`, function(err) {
-            if (err) {
-              console.error(err)
-            } else {
-              console.log(`New department "${answers.newDept}" successfully added.`)
-            }
-          })
+        var newDeptId = results[0].count + 1
+        
+        connection.query (`INSERT INTO department (id, name) VALUES (${newDeptId}, "${answers.newDept}")`, function(err) {
+          if (err) {
+            console.error(err)
+          } else {
+            console.log(`New department "${answers.newDept}" successfully added.`)
+            backOrQuit();
+          }
+        })
       })
     })
     .catch((error) => {
       if (error.isTtyError) {
-      console.error(err)
-    }
-  })
+        console.error(err)
+      }
+    })
 };
 
-// function addRole() {
-//   inquirer
-//     .prompt([{
-//       type: 'input',
-//       name: 'newRole',
-//       message: 'Enter new role name:',
-//     }])
-//     .then((answers) => {
-//       console.log(answers.newRole)
-//       connection.query('SELECT COUNT(*) AS count FROM role', function (err, results) {
-//         console.log(results[0].count)
-//         var newRoleId = results[0].count + 1
+const deptList = []
+function getDepts() {
+  connection.query('SELECT * FROM `department`', function (err, results) {
+    if (err) {
+      console.error(err);
+      } else {
+      for (let i = 0; i < results.length; i++) {
+        deptList.push(results[i].name)
+      }}})
+}
+getDepts()
 
-//         connection.query(`INSERT INTO role (id, name) VALUES (${newDeptId}, "${answers.newDept}")`, function (err) {
-//           if (err) {
-//             console.error(err)
-//           } else {
-//             console.log(`New department "${answers.newDept}" successfully added.`)
-//           }
-//         })
-//       })
-//     })
-//     .catch((error) => {
-//       if (error.isTtyError) {
-//         console.error(err)
-//       }
-//     })
-// };
+
+function addRole() {
+  console.log(deptList)
+  inquirer
+    .prompt([{
+      type: 'input',
+      name: 'newRole',
+      message: 'Enter new role name:',
+    },{
+      type: 'input',
+      name: 'salary',
+      message: 'Enter salary for new role:'
+    }, {
+      type: 'list',
+      name: 'dept',
+      message: 'Choose parent department for new role:',
+      choices: deptList,
+    }])
+    .then((answers) => {
+      connection.query('SELECT COUNT(*) AS count FROM role', function (err, results) {
+        console.log(results[0].count)
+        var newRoleId = results[0].count + 1
+        var deptId = deptList.indexOf(answers.dept) + 1
+
+        connection.query(`INSERT INTO role (id, title, salary, department_id) VALUES (${newRoleId}, "${answers.newRole}", ${answers.salary}, ${deptId})`, function (err) {
+          if (err) {
+            console.error(err)
+          } else {
+            console.log(`New role "${answers.newRole}" successfully added.`)
+            backOrQuit()
+          }
+        })
+      })
+    })
+    .catch((error) => {
+      if (error.isTtyError) {
+        console.error(err)
+      }
+    })
+};
 
 function backOrQuit() {
     inquirer
@@ -142,7 +166,7 @@ function handleResponse(answers) {
   }
   if (answers.q1 === 'Add a role') {
     console.log('running addRole()')
-    // addRole();
+    addRole();
   }
   if (answers.q1 === 'Add an employee') {
     console.log('running addEmployee()')
