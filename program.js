@@ -62,6 +62,7 @@ function addDepartment() {
             console.error(err)
           } else {
             console.log(`New department "${answers.newDept}" successfully added.`)
+            getDepts();
             backOrQuit();
           }
         })
@@ -88,7 +89,7 @@ getDepts()
 
 
 function addRole() {
-  console.log(deptList)
+  getRoles();
   inquirer
     .prompt([{
       type: 'input',
@@ -106,7 +107,6 @@ function addRole() {
     }])
     .then((answers) => {
       connection.query('SELECT COUNT(*) AS count FROM role', function (err, results) {
-        console.log(results[0].count)
         var newRoleId = results[0].count + 1
         var deptId = deptList.indexOf(answers.dept) + 1
 
@@ -115,7 +115,8 @@ function addRole() {
             console.error(err)
           } else {
             console.log(`New role "${answers.newRole}" successfully added.`)
-            backOrQuit()
+            getRoles();
+            backOrQuit();
           }
         })
       })
@@ -157,6 +158,8 @@ function getEmps() {
 getEmps()
 
 function addEmployee() {
+  getRoles()
+  getEmps()
   inquirer
   .prompt([{
     type: 'input',
@@ -188,6 +191,7 @@ function addEmployee() {
             console.error(err)
           } else {
             console.log(`New employee "${answers.newFirst} ${answers.newLast}" successfully added.`)
+            getEmps()
             backOrQuit()
           }
         })
@@ -201,6 +205,8 @@ function addEmployee() {
 };
 
 function updateEmpRole() {
+  getEmps()
+  getRoles()
   inquirer
     .prompt ([
       {
@@ -219,13 +225,13 @@ function updateEmpRole() {
       
       var updatedRoleId = roleList.indexOf(answers.newRole) + 1
       var empId = empList.indexOf(answers.emp) + 1
-      console.log(empId)
       
       connection.query(`UPDATE employee SET role_id = ${updatedRoleId} WHERE id = ${empId}`, function (err) {
         if (err) {
           console.error(err)
         } else {
           console.log(`Updated ${answers.emp}'s role.`)
+          getEmps()
           backOrQuit()
         }
       })
